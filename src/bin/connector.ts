@@ -45,4 +45,30 @@ export class Connector<T extends { id: number }> {
         connect.close();
         return result;
     }
+
+    async update(id: string, data: Partial<iTask>): Promise<iTask> {
+        const { connect, collection } = await mongoConnect(
+            'ISDI202205',
+            'tasks'
+        );
+        const dbId = new ObjectId(id);
+        const result = (await collection.findOneAndUpdate(
+            { _id: dbId },
+            { $set: { ...data } }
+        )) as unknown as Promise<any>;
+        connect.close();
+        return result;
+    }
+
+    async delete(id: string) {
+        const { connect, collection } = await mongoConnect(
+            'ISDI202205',
+            'tasks'
+        );
+        const dbId = new ObjectId(id);
+        const result = await collection.findOneAndDelete({ _id: dbId });
+        connect.close();
+        if (!result.value) return { status: 404 };
+        return { status: 202 };
+    }
 }
