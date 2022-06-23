@@ -14,7 +14,7 @@ describe('Given a function', () => {
     let taskModel: TaskModel;
     beforeEach(() => {
         req = {
-            params: { id: '1' },
+            params: { id: '62b4a4d245c0c4bdc0fbee23' },
             body: {},
         };
         resp = {
