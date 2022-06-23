@@ -34,24 +34,17 @@ describe('Given a function', () => {
     });
 
     describe('When we call getController', () => {
-        test('Then the resp.end should be called', async () => {
-            let mockResult = {
-                id: 2,
-                title: 'test',
-                responsible: 'testResponsible',
-                isCompleted: false,
-            };
-            taskModel.find = jest.fn().mockResolvedValue(mockResult.id);
+        test('Them resp.end should be called', async () => {
+            TaskModel.prototype.find = jest.fn().mockResolvedValue({});
             await getController(req as Request, resp as Response);
-            expect(resp.end).toHaveBeenCalledWith(JSON.stringify(mockResult));
-            expect(resp.setHeader).toHaveBeenCalled();
+            expect(resp.end).toHaveBeenCalledWith(JSON.stringify({}));
         });
     });
     describe('When we call getController with a wrong id', () => {
         test('Then the resp.end should be called with a 404', async () => {
-            taskModel.find = jest.fn().mockResolvedValue(null);
+            TaskModel.prototype.find = jest.fn().mockResolvedValue(null);
             await getController(req as Request, resp as Response);
-            expect(resp.status).toHaveBeenCalled();
+            expect(resp.status).toHaveBeenCalledWith(404);
         });
     });
     describe('When we call postController', () => {
