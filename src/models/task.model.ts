@@ -15,7 +15,7 @@ export class TaskModel extends Connector<iTask> implements iTask {
         public responsible: string = '',
         public isCompleted: boolean = false
     ) {
-        super('task-db');
+        super();
         this.id = 0;
     }
 }
