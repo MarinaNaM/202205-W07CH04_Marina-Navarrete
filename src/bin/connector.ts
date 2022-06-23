@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import fs from 'fs/promises';
 import { ObjectId } from 'mongodb';
-import { mongoConnect } from '../db/mongo';
-import { iTask } from '../models/task.model';
+import { mongoConnect } from '../db/mongo.js';
+import { iTask } from '../models/task.model.js';
 
 export class Connector<T extends { id: number }> {
     constructor() {}

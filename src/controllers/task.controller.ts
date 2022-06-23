@@ -11,7 +11,7 @@ export const getAllController = async (req: Request, resp: Response) => {
 
 export const getController = async (req: Request, resp: Response) => {
     resp.setHeader('Content-type', 'application/json');
-    const result = await taskModel.find(Number(req.params.id));
+    const result = await taskModel.find(req.params.id);
     if (result) {
         resp.end(JSON.stringify(result));
     } else {
@@ -28,13 +28,13 @@ export const postController = async (req: Request, resp: Response) => {
 };
 
 export const patchController = async (req: Request, resp: Response) => {
-    const updateTask = await taskModel.update(Number(req.params.id), req.body);
+    const updateTask = await taskModel.update(req.params.id, req.body);
     resp.setHeader('Content-type', 'application/json');
     resp.end(JSON.stringify(updateTask));
 };
 
 export const deleteController = async (req: Request, resp: Response) => {
-    const { status } = await taskModel.delete(Number(req.params.id));
+    const { status } = await taskModel.delete(req.params.id);
     resp.status(status);
     resp.end(JSON.stringify({}));
 };

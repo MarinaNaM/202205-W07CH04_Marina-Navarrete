@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 import { Connector } from '../bin/connector.js';
-import { mongoConnect } from '../db/mongo.js';
 
 export interface iTask {
     id: number;
