@@ -1,61 +1,48 @@
 /* eslint-disable no-unused-vars */
 import fs from 'fs/promises';
+import { ObjectId } from 'mongodb';
+import { mongoConnect } from '../db/mongo';
+import { iTask } from '../models/task.model';
 
 export class Connector<T extends { id: number }> {
-    data: Array<T>;
-    path: string;
-    constructor(private fileName: string) {
-        this.data = [];
-        this.path = `./src/data/${this.fileName}.json`;
+    constructor() {}
+
+    async findAll(): Promise<Array<iTask>> {
+        const { connect, collection } = await mongoConnect(
+            'ISDI202205',
+            'tasks'
+        );
+        const cursor = collection.find();
+        const result = await (cursor.toArray() as unknown as Promise<
+            Array<iTask>
+        >);
+        connect.close();
+        return result;
     }
 
-    private async readFile() {
-        return JSON.parse(await fs.readFile(this.path, { encoding: 'utf-8' }));
+    async find(id: string): Promise<iTask | undefined> {
+        const { connect, collection } = await mongoConnect(
+            'ISDI202205',
+            'tasks'
+        );
+        const dbId = new ObjectId(id);
+        const result = (await collection.findOne({
+            _id: dbId,
+        })) as unknown as iTask;
+        if (result === null) return undefined;
+        connect.close();
+        return result;
     }
 
-    private async writeFile(data: Array<T>) {
-        return await fs.writeFile(this.path, JSON.stringify(data), {
-            encoding: 'utf-8',
-        });
-    }
-
-    async findAll(): Promise<Array<T>> {
-        const fileData = await this.readFile();
-        return fileData;
-    }
-    async find(id: number): Promise<T | undefined> {
-        const fileData = await this.readFile();
-        const item = fileData.find((item: T) => item.id === id);
-        return item;
-    }
-    async create(data: Partial<T>): Promise<T> {
-        const fileData = await this.readFile();
-        const newItem = { ...data, id: fileData[fileData.length - 1].id + 1 };
-        fileData.push(newItem);
-        this.writeFile(fileData);
-        return newItem as T;
-    }
-    async update(id: number, data: Partial<T>): Promise<T> {
-        let fileData = await this.readFile();
-        if (data.id) delete data.id;
-        let updateItem: unknown;
-        fileData = fileData.map((item: T) => {
-            if (item.id === id) {
-                updateItem = { ...item, ...data };
-                return updateItem;
-            } else {
-                return item;
-            }
-        });
-        this.writeFile(fileData);
-        return updateItem as T;
-    }
-    async delete(id: number) {
-        let fileData = await this.readFile();
-        const prevLength = fileData.length;
-        fileData = fileData.filter((item: T) => item.id !== id);
-        if (prevLength === fileData.length) return { status: 404 };
-        this.writeFile(fileData);
-        return { status: 202 };
+    async create(data: Partial<iTask>): Promise<iTask> {
+        const { connect, collection } = await mongoConnect(
+            'ISDI202205',
+            'tasks'
+        );
+        const result = (await collection.insertOne(
+            data
+        )) as unknown as Promise<any>;
+        connect.close();
+        return result;
     }
 }

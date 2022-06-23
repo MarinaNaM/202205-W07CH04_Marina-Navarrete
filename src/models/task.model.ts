@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { Connector } from '../bin/connector.js';
+import { mongoConnect } from '../db/mongo.js';
 
 export interface iTask {
     id: number;
@@ -15,7 +16,7 @@ export class TaskModel extends Connector<iTask> implements iTask {
         public responsible: string = '',
         public isCompleted: boolean = false
     ) {
-        super('task-db');
+        super();
         this.id = 0;
     }
 }
